@@ -1,0 +1,59 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Bundle fonts so the app works offline
+        run: |
+          mkdir -p app/src/main/assets/www/fonts
+          cd app/src/main/assets/www/fonts
+          base=https://raw.githubusercontent.com/google/fonts/main/ofl
+          curl -fsSL -o Gloock-Regular.ttf "$base/gloock/Gloock-Regular.ttf" || echo "Gloock not found, using fallback"
+          curl -fsSL -o PublicSans.ttf "$base/publicsans/PublicSans%5Bwght%5D.ttf" || echo "Public Sans not found, using fallback"
+          curl -fsSL -o IBMPlexMono-Regular.ttf "$base/ibmplexmono/IBMPlexMono-Regular.ttf" || echo "Plex Mono not found, using fallback"
+          ls -la
+
+      - name: Stamp version
+        run: sed -i "s/__VERSION__/1.0.${GITHUB_RUN_NUMBER}/" app/src/main/assets/www/app.js
+
+      - name: Build signed APK
+        run: gradle :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Rename APK
+        run: cp app/build/outputs/apk/release/app-release.apk 80hdkb-library.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: 80hdkb-library-apk
+          path: 80hdkb-library.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: 80hdkb Library 1.0.${{ github.run_number }}
+          body: |
+            Install on Android: open this page on your phone or Boox, tap **80hdkb-library.apk**, then Install.
+            Built from ${{ github.sha }}.
+          files: 80hdkb-library.apk
+          make_latest: true

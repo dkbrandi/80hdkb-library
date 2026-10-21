@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>80hdkb Library</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="masthead">
+      <div class="brand"><h1>80hdkb Library</h1><span class="exlibris" id="exl">Ex libris</span><button class="syncpill" id="syncPill" type="button"><i></i><span>Offline</span></button></div>
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-catalogue" aria-selected="true" data-tab="catalogue">Catalogue</button>
+        <button role="tab" id="tab-shelves" aria-selected="false" data-tab="shelves">Rooms &amp; shelves</button>
+        <button role="tab" id="tab-wishlist" aria-selected="false" data-tab="wishlist">Wishlist</button>
+      </div>
+      <button class="btn primary" id="addBtn">+ Add book</button>
+      <button class="iconbtn" id="setBtn" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+    <div class="toolbar" id="toolbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <label class="sr" for="q">Search</label>
+        <input id="q" type="search" placeholder="Search title, author, ISBN, notes…" autocomplete="off">
+      </div>
+      <button class="btn" id="filtBtn" type="button" aria-expanded="false" aria-controls="filters">Filters</button>
+      <div class="filters" id="filters">
+      <label class="sr" for="fRoom">Room</label><select class="f" id="fRoom"></select>
+      <label class="sr" for="fShelf">Shelf</label><select class="f" id="fShelf"></select>
+      <label class="sr" for="fGenre">Genre</label><select class="f" id="fGenre"></select>
+      <label class="sr" for="fStatus">Reading status</label>
+      <select class="f" id="fStatus"><option value="">Any status</option><option value="read">Read</option><option value="started">Started</option><option value="unread">Unread</option><option value="none">No status</option></select>
+      <label class="sr" for="fFix">Needs attention</label>
+      <select class="f" id="fFix"><option value="">All books</option><option value="noroom">No room</option><option value="noshelf">No shelf</option><option value="nophoto">No photo</option><option value="nopages">No page count</option><option value="nogenre">No genre</option></select>
+      <label class="sr" for="sort">Sort</label>
+      <select class="f" id="sort"><option value="title">Title A–Z</option><option value="author">Author A–Z</option><option value="pages">Longest first</option><option value="location">By location</option><option value="recent">Recently added</option></select>
+      <div class="seg" role="group" aria-label="View">
+        <button id="vGrid" aria-pressed="true" title="Cover grid"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="9" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+        <button id="vList" aria-pressed="false" title="Table"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="3" rx="1"/><rect x="3" y="10.5" width="18" height="3" rx="1"/><rect x="3" y="17" width="18" height="3" rx="1"/></svg></button>
+      </div>
+      </div>
+      <button class="btn" id="selBtn">Select</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="main"></main>
+
+<div class="bulk" id="bulk" hidden>
+  <div class="wrap">
+    <span><span class="n" id="bulkN">0</span> selected</span>
+    <label class="sr" for="bRoom">Move to room</label><select id="bRoom"></select>
+    <label class="sr" for="bShelf">Move to shelf</label><select id="bShelf"></select>
+    <button class="btn" id="bMove">Move here</button>
+    <label class="sr" for="bStatus">Set status</label>
+    <select id="bStatus"><option value="">Set status…</option><option value="read">Read</option><option value="started">Started</option><option value="unread">Unread</option></select>
+    <span class="grow"></span>
+    <button class="btn ghost" id="bAll">Select all shown</button>
+    <button class="btn ghost" id="bDone">Done</button>
+  </div>
+</div>
+
+<dialog class="drawer" id="drawer" aria-labelledby="dTitle">
+  <form class="drawer-inner" id="bookForm" method="dialog">
+    <div class="drawer-head"><h3 id="dTitle">Catalogue card</h3><button type="button" class="btn ghost x" id="dClose">Close</button></div>
+    <div class="drawer-body">
+      <div class="photo-row">
+        <div id="dCover"></div>
+        <div class="photo-actions">
+          <span class="file-btn btn" id="camWrap">Take cover photo<input type="file" id="fCam" accept="image/*" capture="environment"></span>
+          <span class="file-btn btn" id="upWrap">Upload image<input type="file" id="fUp" accept="image/*"></span>
+          <button type="button" class="btn ghost danger" id="rmPhoto" hidden>Remove photo</button>
+          <span class="hint" id="photoHint">Photos are resized before saving, so a phone snapshot is fine.</span>
+        </div>
+      </div>
+      <div class="fields">
+        <div class="field full"><label for="iTitle">Title</label><input id="iTitle" required></div>
+        <div class="field full"><label for="iAuthor">Author</label><input id="iAuthor" list="dlAuthors"></div>
+        <div class="field"><label for="iGenre">Genre</label><input id="iGenre" list="dlGenres"></div>
+        <div class="field"><label for="iPages">Pages</label><input id="iPages" type="number" min="1" inputmode="numeric"></div>
+        <div class="field"><label for="iRoom">Room</label><select id="iRoom"></select></div>
+        <div class="field"><label for="iShelf">Shelf</label><select id="iShelf"></select></div>
+        <div class="field"><label for="iStatus">Reading status</label><select id="iStatus"><option value="">No status</option><option value="unread">Unread</option><option value="started">Started</option><option value="read">Read</option></select></div>
+        <div class="field"><label for="iColl">Collection</label><input id="iColl" list="dlColls"></div>
+        <div class="field"><label for="iIsbn">ISBN</label><input id="iIsbn" inputmode="numeric"></div>
+        <div class="field" style="justify-content:flex-end"><label class="check"><input type="checkbox" id="iSg"> On StoryGraph</label><label class="check"><input type="checkbox" id="iWish"> On wishlist (not owned yet)</label></div>
+        <div class="field full"><label for="iNotes">Notes</label><textarea id="iNotes" placeholder="Signed copy, first edition, lent to…"></textarea></div>
+        <div class="field full" id="synWrap" hidden><label>Synopsis</label><div id="iSyn" style="font-size:14px;color:var(--muted)"></div></div>
+        <div class="field full" id="subWrap" hidden><label>Subjects</label><div class="subjects" id="iSubs"></div></div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button type="button" class="btn danger" id="delBtn">Delete</button>
+      <span class="grow"></span>
+      <button type="button" class="btn" id="cancelBtn">Cancel</button>
+      <button type="submit" class="btn primary" id="saveBtn">Save</button>
+    </div>
+  </form>
+</dialog>
+<datalist id="dlAuthors"></datalist><datalist id="dlGenres"></datalist><datalist id="dlColls"></datalist>
+<div class="toast" id="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
